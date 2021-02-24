@@ -15,6 +15,7 @@ const int _tabsLength = 4;
 class _HomeState extends State<Home> with TickerProviderStateMixin {
   TabController ctrl;
   int activeTab;
+  GlobalKey key;
   @override
   void initState() {
     super.initState();
@@ -27,25 +28,22 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     ctrl.addListener(_onTabChanged);
   }
 
+  @override
+  void setState(VoidCallback cb) {
+    super.setState(cb);
+    print('tab bar setState toggle');
+  }
+
   void _onTabChanged() {
-    if (activeTab != ctrl.index) {
-      pfCb(() => setState(() {
-            activeTab = ctrl.index;
-            print('active tab changed to $activeTab');
-          }));
+    if (!ctrl.indexIsChanging && activeTab != ctrl.index) {
+      activeTab = ctrl.index;
+      pfCb(() => setState(() {}));
     }
   }
 
+  List<Widget> tabs;
   @override
   Widget build(BuildContext context) {
-    final tabs = [
-      for (int i = 0; i < _tabsLength; i++)
-        MyTab(
-          key: ValueKey<int>(i),
-          index: i,
-          isActive: activeTab == i,
-        )
-    ];
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -62,7 +60,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       ),
       body: TabBarView(
         controller: ctrl,
-        children: tabs,
+        children: <Widget>[
+          for (int i = 0; i < _tabsLength; i++)
+            MyTab(
+              key: ValueKey<int>(i),
+              index: i,
+              isActive: activeTab == i,
+            )
+        ],
       ),
     );
   }

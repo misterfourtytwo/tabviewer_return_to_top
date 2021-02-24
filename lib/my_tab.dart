@@ -8,6 +8,10 @@ class MyTab extends StatefulWidget {
   final bool isActive;
 
   const MyTab({Key key, this.index, this.isActive = false}) : super(key: key);
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'my tab $index $isActive';
+  }
 
   @override
   _MyTabState createState() => _MyTabState();
@@ -17,10 +21,25 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
   final bool wantKeepAlive = true;
   int childrenCount = 2;
   bool loading = false;
+  bool isActive;
+  @override
+  void initState() {
+    super.initState();
+    isActive = widget.isActive;
+    print('${widget.index} initState callback');
+  }
+
+  @override
+  void didChangeDependencies() {
+    isActive = widget.isActive;
+    print('${widget.index} didChangeDependencies callback');
+    super.didChangeDependencies();
+  }
 
   @override
   void didUpdateWidget(MyTab oldWidget) {
     super.didUpdateWidget(oldWidget);
+    isActive = widget.isActive;
     if (widget.isActive ^ oldWidget.isActive) {
       print('${widget.index} toggled ${widget.isActive ? '' : 'in'}active');
       pfCb(() => setState(() {}));
@@ -28,20 +47,18 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
   }
 
   bool onNotification(ScrollNotification notification) {
-    if (notification is ScrollUpdateNotification) {
-      // print('on scroll update notification');
-      if (widget.isActive &&
-          !loading &&
-          notification.metrics.extentAfter < 50) {
-        load();
-      }
+    if (notification is ScrollUpdateNotification &&
+        widget.isActive &&
+        !loading &&
+        notification.metrics.extentAfter < 50) {
+      load();
     }
 
     return false;
   }
 
   Future<void> load() async {
-    print('on load');
+    print('${widget.index} on load');
     loading = true;
     pfCb(() {
       if (mounted) setState(() {});
