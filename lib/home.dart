@@ -16,6 +16,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   TabController ctrl;
   int activeTab;
   GlobalKey key;
+
   @override
   void initState() {
     super.initState();
@@ -28,12 +29,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     ctrl.addListener(_onTabChanged);
   }
 
-  @override
-  void setState(VoidCallback cb) {
-    super.setState(cb);
-    print('tab bar setState toggle');
-  }
-
   void _onTabChanged() {
     if (!ctrl.indexIsChanging && activeTab != ctrl.index) {
       activeTab = ctrl.index;
@@ -41,7 +36,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     }
   }
 
-  List<Widget> tabs;
+  @override
+  void dispose() {
+    ctrl.removeListener(_onTabChanged);
+    ctrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,10 +52,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         bottom: TabBar(
           controller: ctrl,
           tabs: [
-            Text('tab 0'),
-            Text('tab 1'),
-            Text('tab 2'),
-            Text('tab 3'),
+            for (int i = 0; i < _tabsLength; i++) Text('tab $i'),
           ],
         ),
       ),

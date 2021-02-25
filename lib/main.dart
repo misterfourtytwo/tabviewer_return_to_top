@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'home.dart';
-import 'home_without_tabs.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +16,6 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Home(),
-      // home: HomeWithoutTabs(),
     );
   }
 }

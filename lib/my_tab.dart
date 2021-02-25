@@ -21,35 +21,11 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
   final bool wantKeepAlive = true;
   int childrenCount = 2;
   bool loading = false;
-  bool isActive;
-  @override
-  void initState() {
-    super.initState();
-    isActive = widget.isActive;
-    print('${widget.index} initState callback');
-  }
-
-  @override
-  void didChangeDependencies() {
-    isActive = widget.isActive;
-    print('${widget.index} didChangeDependencies callback');
-    super.didChangeDependencies();
-  }
-
-  @override
-  void didUpdateWidget(MyTab oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    isActive = widget.isActive;
-    if (widget.isActive ^ oldWidget.isActive) {
-      print('${widget.index} toggled ${widget.isActive ? '' : 'in'}active');
-      pfCb(() => setState(() {}));
-    }
-  }
 
   bool onNotification(ScrollNotification notification) {
-    if (notification is ScrollUpdateNotification &&
-        widget.isActive &&
+    if (widget.isActive &&
         !loading &&
+        notification is ScrollUpdateNotification &&
         notification.metrics.extentAfter < 50) {
       load();
     }
