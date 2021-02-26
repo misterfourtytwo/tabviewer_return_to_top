@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tabviewer_return_to_top/utils.dart';
 
@@ -23,6 +24,7 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
   bool loading = false;
 
   bool onNotification(ScrollNotification notification) {
+    print('on scroll');
     if (widget.isActive &&
         !loading &&
         notification is ScrollUpdateNotification &&
@@ -57,6 +59,7 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
     return NotificationListener<ScrollNotification>(
       onNotification: onNotification,
       child: ListView.builder(
+        physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         controller: PrimaryScrollController.of(context),
         itemCount: childrenCount + (loading ? 1 : 0),
         itemBuilder: (context, index) => index == childrenCount
