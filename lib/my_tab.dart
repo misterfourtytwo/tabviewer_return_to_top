@@ -19,17 +19,20 @@ class MyTab extends StatefulWidget {
 }
 
 class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
+  @override
   final bool wantKeepAlive = true;
   int childrenCount = 2;
   bool loading = false;
 
   bool onNotification(ScrollNotification notification) {
     print('on scroll');
-    if (widget.isActive &&
-        !loading &&
-        notification is ScrollUpdateNotification &&
-        notification.metrics.extentAfter < 50) {
-      load();
+    if (widget.isActive && !loading) {
+      if ((notification is OverscrollNotification &&
+              notification.overscroll > 0) ||
+          (notification is ScrollUpdateNotification &&
+              notification.metrics.extentAfter < 50)) {
+        load();
+      }
     }
 
     return false;
@@ -59,7 +62,7 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
     return NotificationListener<ScrollNotification>(
       onNotification: onNotification,
       child: ListView.builder(
-        physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        physics: AlwaysScrollableScrollPhysics(),
         controller: PrimaryScrollController.of(context),
         itemCount: childrenCount + (loading ? 1 : 0),
         itemBuilder: (context, index) => index == childrenCount
