@@ -52,9 +52,26 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         bottom: TabBar(
           controller: ctrl,
           tabs: [
-            for (int i = 0; i < _tabsLength; i++) Text('tab $i'),
+            for (int i = 0; i < _tabsLength; i++)
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('tab $i'),
+              ),
           ],
         ),
+        actions: [
+          Builder(
+            builder: (context) {
+              return IconButton(
+                icon: Icon(Icons.timer_outlined),
+                onPressed: () {
+                  PrimaryScrollController.of(context).animateTo(0,
+                      duration: Duration(seconds: 1), curve: Curves.easeInOut);
+                },
+              );
+            },
+          )
+        ],
       ),
       body: TabBarView(
         controller: ctrl,
