@@ -24,17 +24,23 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
   int childrenCount = 2;
   bool loading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    childrenCount += widget.index;
+  }
+
   bool onNotification(ScrollNotification notification) {
     print('on scroll');
+
     if (widget.isActive && !loading) {
       if ((notification is OverscrollNotification &&
               notification.overscroll > 0) ||
           (notification is ScrollUpdateNotification &&
-              notification.metrics.extentAfter < 50)) {
+              notification.metrics.extentAfter < 200)) {
         load();
       }
     }
-
     return false;
   }
 
@@ -46,7 +52,7 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
     });
     await Future.delayed(Duration(seconds: 3));
 
-    childrenCount += 3;
+    childrenCount += 2;
     pfCb(() {
       if (mounted)
         setState(() {
@@ -62,8 +68,11 @@ class _MyTabState extends State<MyTab> with AutomaticKeepAliveClientMixin {
     return NotificationListener<ScrollNotification>(
       onNotification: onNotification,
       child: ListView.builder(
+        // automaticKeepAlive stopped keeping extents with primary
+        // primary: widget.isActive,
         physics: AlwaysScrollableScrollPhysics(),
         controller: PrimaryScrollController.of(context),
+
         itemCount: childrenCount + (loading ? 1 : 0),
         itemBuilder: (context, index) => index == childrenCount
             ? Container(
